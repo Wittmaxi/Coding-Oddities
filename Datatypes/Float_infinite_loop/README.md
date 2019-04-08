@@ -1,0 +1,46 @@
+# Infinite Loops inspite of seemingly correct loop instruction
+
+This infinite loop wouldn't appear to be an infinite loop at first glance. It is one, however. WATCH OUT!
+
+## Why does this happen? 
+### The IEEE float format
+https://en.wikipedia.org/wiki/IEEE_754
+### float imprecision
+https://stackoverflow.com/questions/753948/why-is-floating-point-arithmetic-in-c-sharp-imprecise#753955
+### Why this affects us
+Floats are imprecise - since you sometimes cannot take the full steps, the float registers improvise. In this case, they leave the number as is - detrimental behaviour for our loop!
+
+## how to compile this
+
+```console
+g++ main.cpp
+```
+
+#### possible output
+```console
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000.000000
+100000000000000000^C
+```
