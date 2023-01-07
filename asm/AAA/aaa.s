@@ -1,0 +1,44 @@
+.686                                    ;
+data SEGMENT                            ;
+    TOWR DB 0, 09H                      ;
+    CARRY DB "CARRY FLAG SET", 09H      ;
+    CARRY_SIZE EQU $ - CARRY            ;
+data ENDS                               ;
+                                        ;
+code SEGMENT                            ;
+    ASSUME DS:data                      ;
+_start PROC                             ;
+    ;- set values into registers - all ascii numbers
+    MOV AX, 036H                        ;
+    MOV CX, 035H                        ; => 3 + 8 = 11 but in Ascii, expect CF set
+    ;- perform the addition             ;
+    ADD ax, cx                          ;
+    ;- adjust for ASCII values          ;
+    AAA                                 ;
+    PUSH ax                             ;
+    ;- is carry flag set?               ;
+    JNC @@continue                      ; If not, skip the print
+    ;-- If yes, print, otherwise quit   ;
+    MOV eax, 4                          ;
+    MOV ebx, 0                          ;
+    MOV ecx, OFFSET CARRY               ;
+    MOV edx, CARRY_SIZE                 ;
+    INT 80H                             ;
+    ;-- quit because CF is not set      ;
+@@continue:                             ;
+    ;- write ax into the write string   ;
+    POP ax                              ;
+    ADD ax, '0'                         ;
+    MOV BYTE PTR [data:TOWR], al        ;
+    ;- Print message                    ;
+    MOV eax, 4                          ;
+    MOV ebx, 0                          ;
+    MOV ecx, OFFSET data:TOWR           ;
+    MOV edx, 2                          ;
+    INT 80H                             ;
+    ;- exit                             ;
+    MOV eax, 1                          ;
+    INT 80H                             ;
+_start ENDP                             ;
+code ENDS                               ;
+END                                     ;
